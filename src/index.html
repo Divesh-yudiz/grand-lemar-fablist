@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <script type="module" defer src="./js/index.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios@1.6.2/dist/axios.min.js"></script>
+
+  <title>Grand Le Mar</title>
+  <style>
+    /* body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    } */
+
+    body {
+      background-color: #181818;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      color: #ffffff;
+    }
+
+    /* Full-screen loader container */
+    .loader-container {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: calc(100% - 200px);
+      height: calc(100% - 200px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(219, 219, 219, 0.6);
+      backdrop-filter: blur(10px);
+      z-index: 1000;
+      transition: opacity 0.5s ease-in-out;
+    }
+
+    /* Spinning ring */
+    .loader {
+      width: 80px;
+      height: 80px;
+      border: 8px solid rgba(255, 255, 255, 0.3);
+      border-top: 8px solid #3498db;
+      border-radius: 50%;
+      animation: spin 1.2s ease-in-out infinite;
+      z-index: 1000;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Fade-out effect when content loads */
+    .hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .card {
+      background-color: #f0f0f0;
+      margin: 10px;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .left-container {
+      width: 200px;
+      position: fixed;
+      left: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .right-container {
+      width: 200px;
+      position: fixed;
+      right: 0;
+      top: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .card-image {
+      width: 140px;
+      height: 140px;
+      object-fit: cover;
+      border-radius: 5px;
+    }
+
+    .highlight {
+      border: 2px solid #3498db;
+      /* Highlight border color */
+      box-shadow: 0 0 10px rgba(52, 152, 219, 0.5);
+      /* Optional shadow effect */
+    }
+
+    .card.highlight {
+      background-color: #d0eaff;
+      /* New background color for highlighted card */
+    }
+
+    .form {
+      padding: 150px 10px 10px;
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      flex-direction: column;
+      gap: 50px;
+    }
+
+    img {
+      width: 100%;
+      max-width: 300px;
+    }
+
+    button {
+      border-radius: 5px;
+      font-size: 18px;
+      color: #000000;
+      background-color: #fcfcfc;
+      border: none;
+      padding: 15px 35px;
+      line-height: 1;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .loader {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #3498db;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      animation: spin 1s linear infinite;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 9999;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: translate(-50%, -50%) rotate(0deg);
+      }
+
+      100% {
+        transform: translate(-50%, -50%) rotate(360deg);
+      }
+    }
+
+    .loading-message {
+      display: none;
+      position: fixed;
+      top: calc(50% + 40px);
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #ff2b2b;
+      font-size: 18px;
+      font-weight: bold;
+      z-index: 9999;
+    }
+
+    .success-message {
+      display: none;
+      color: #00ff00;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    #fabric-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: space-between;
+      flex-direction: row;
+    }
+
+    .fabric-div {
+      text-align: center;
+    }
+
+    .fabric-div img {
+      border-radius: 8px;
+      cursor: pointer;
+      width: 200px;
+      height: 200px;
+    }
+
+    .fabric-serial_number {
+      margin-top: 5px;
+      font-size: 14px;
+    }
+
+    .fabric-div img:hover {
+      transform: scale(1.1);
+    }
+
+    .fabric-div img.selected {
+      border: 2px solid #00ff00;
+      z-index: 9998
+    }
+
+    .successmessage {
+      display: none;
+      color: #00ff00;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.1);
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      display: none;
+      animation: scaleIn 0.15s ease-out forwards;
+    }
+
+    .update-button {
+      position: absolute;
+      bottom: 7%;
+      left: 52%;
+      background-color: #fcfcfc;
+      border: none;
+      z-index: 9999;
+    }
+
+    .scene {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 50%;
+      height: 50%;
+      /* display: none; */
+    }
+
+    .slider {
+      position: absolute;
+      bottom: 8%;
+      left: 40%;
+      transform: translateX(-50%);
+      z-index: 9999;
+      width: 10%;
+    }
+
+    .slider-value {
+      position: absolute;
+      bottom: 8%;
+      left: 48%;
+      transform: translateX(-50%);
+      z-index: 9999;
+      color: #000;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .controls {
+      display: none;
+    }
+
+    /* Define the scale animation */
+    @keyframes scaleIn {
+      0% {
+        transform: translate(-50%, -50%) scale(0);
+      }
+
+      100% {
+        transform: translate(-50%, -50%) scale(1);
+      }
+    }
+
+    /* Style for the close button */
+    .close-button {
+      position: absolute;
+      top: 40px;
+      right: 30px;
+      background: none;
+      border: none;
+      font-size: 50px;
+      color: #ffffff;
+      cursor: pointer;
+      z-index: 10000;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="form">
+    <img src="logo.svg" alt="">
+    <button type="button" id="update-fabric-button">Update Fabric</button>
+    <div class="loading-message">Fabric is Updating Please Wait</div>
+    <div class="successmessage">Fabric is Updated & Added at Last</div>
+    <div class="success-message">Success!</div>
+    <div id="fabric-container" class="fabrics"> </div>
+  </div>
+
+  <div class="popup">
+    <div class="loader-container">
+      <div class="loader"></div>
+    </div>
+    <canvas class="scene"></canvas>
+    <div class="controls">
+      <input type="range" min="0" max="50" value="25" class="slider" id="mySlider">
+      <div class="slider-value">25</div>
+      <button type="button" class="update-button">Update Fabric</button>
+    </div>
+    <button class="close-button">×</button>
+  </div>
+</body>
+
+</html>
