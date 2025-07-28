@@ -4,6 +4,6 @@ import FabricManager from './fabList'
 
 (() => {
   // scene
+  // new FabricManager()
   new MainScene()
-  new FabricManager()
 })()
