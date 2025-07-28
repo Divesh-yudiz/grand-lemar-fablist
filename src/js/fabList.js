@@ -2,7 +2,7 @@ import MainScene from './scene';
 
 class FabricManager {
     constructor() {
-        this.api = 'https://grand-le-mar.lc.webdevprojects.cloud/api/v1/';
+        this.api = 'https://grand-le-mar-be.virals.studio/api/v1/';
         // this.api = 'http://192.168.11.51:4000/api/v1/';
         this.mainSceneInstance = new MainScene();
         console.log("FabricManager constructor");

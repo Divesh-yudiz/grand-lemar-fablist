@@ -36,7 +36,7 @@ import axios from 'axios';
 import FabricManager from './fabList';
 
 let instance = null;
-const api = 'https://grand-le-mar.lc.webdevprojects.cloud/api/v1/'
+const api = 'https://grand-le-mar-be.virals.studio/api/v1/'
 
 export default class MainScene {
   canvas
